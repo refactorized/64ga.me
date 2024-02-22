@@ -32,10 +32,14 @@ export class GameGrid extends LitElement {
   @state()
   private answers: Answer[] = initGrid()
 
+  @state()
+  private paletteOffset: number = 0
+
   buildAnswerHandler(index: number) {
     return () => {
       this.answers = produce(this.answers, (answers) => {
         answers[index].correct = !this.answers[index].correct
+        this.paletteOffset = (this.paletteOffset + 13) % 64
       })
     }
   }
@@ -45,9 +49,12 @@ export class GameGrid extends LitElement {
       <div class="frame">
         <div class="grid">
           ${this.answers.map((ans, index) => {
+            const paletteIndex = (index + this.paletteOffset) % 64
             const prompt = html`${ans.a} <span class="times">x</span> ${ans.b}`
             return html` <div
-              style=${`--color-fg-pri: hsl(${(360 / 64) * index}deg 100 75);`}
+              style=${`--color-fg-pri: hsl(${
+                (360 / 64) * paletteIndex
+              }deg 100 75);`}
               class="cell"
               data-correct=${ans.correct}
               @click=${this.buildAnswerHandler(index)}
@@ -64,7 +71,7 @@ export class GameGrid extends LitElement {
     :host {
       position: absolute;
       left: 0;
-      top: 0;s
+      top: 0;
       width: 100%;
       height: 100%;
 
@@ -108,6 +115,8 @@ export class GameGrid extends LitElement {
       color: var(--color-fg-pri);
       margin: 5px;
       border-radius: 7px;
+
+      transition: background-color 300ms, color 300ms, border-color 600ms;
     }
     .times {
       font-size: 0.618em;
