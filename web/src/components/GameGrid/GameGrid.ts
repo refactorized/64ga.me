@@ -49,7 +49,7 @@ export class GameGrid extends LitElement {
     super.connectedCallback()
     this.interval = setInterval(() => {
       this.rotatePaletteDeg = (this.rotatePaletteDeg + 15) % 360
-    }, 100)
+    }, 111)
   }
 
   disconnectedCallback(): void {
@@ -93,7 +93,7 @@ export class GameGrid extends LitElement {
       align-items: center;
       justify-content: center;
 
-      font-size: 3.2vw;
+      font-size: 2.8vw;
     }
     .frame {
       width: 96vmin;
@@ -116,7 +116,13 @@ export class GameGrid extends LitElement {
     .cell {
       /* ideally mod 360, but mod not widely supported, and hsl wraps hue */
       --cell-hue: calc(var(--rot-pal-deg) + var(--pal-offset-deg));
+      --cell-hue-sec: calc(var(--rot-pal-deg) + var(--pal-offset-deg) + 120);
+      --cell-hue-ter: calc(var(--rot-pal-deg) + var(--pal-offset-deg) + 240);
+
       --color-fg-pri: hsl(calc(1deg * var(--cell-hue)) 100 80);
+      --color-fg-sec: hsl(calc(1deg * var(--cell-hue-sec)) 100 80);
+      --color-fg-ter: hsl(calc(1deg * var(--cell-hue-ter)) 100 80);
+
       display: flex;
       align-items: center;
       justify-content: center;
@@ -125,17 +131,24 @@ export class GameGrid extends LitElement {
       font-weight: 400;
       font-style: normal;
 
+      text-shadow: 1px 1px 1px #000f, -1px -1px 1px #000f,
+        3px 3px 5px var(--color-fg-ter), -3px -3px 5px var(--color-fg-sec);
+
+      box-shadow: inset 1vmin 1vmin 2vmin var(--color-fg-ter),
+        inset -1vmin -1vmin 2vmin var(--color-fg-sec);
+
       font-size: 1em;
       text-align: center;
       white-space: nowrap;
-      border: var(--color-fg-pri) solid 3px;
+      /* border: var(--color-fg-pri) solid 3px; */
       color: var(--color-fg-pri);
 
       margin: 5px;
       border-radius: 7px;
 
-      transition: background-color 300ms linear, color 300ms linear,
-        border-color 300ms linear;
+      transition: background-color 111ms linear, color 111ms linear,
+        border-color 111ms linear, text-shadow 111ms linear,
+        box-shadow 111ms linear;
     }
     .times {
       font-size: 0.618em;
