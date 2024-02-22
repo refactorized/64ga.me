@@ -48,7 +48,8 @@ export class GameGrid extends LitElement {
   connectedCallback() {
     super.connectedCallback()
     this.interval = setInterval(() => {
-      this.rotatePaletteDeg = (this.rotatePaletteDeg + 15) % 360
+      // high modulo allows interesting math, no overflow
+      this.rotatePaletteDeg = (this.rotatePaletteDeg + 15) % 360 ** 2
     }, 100)
   }
 
@@ -93,7 +94,7 @@ export class GameGrid extends LitElement {
       align-items: center;
       justify-content: center;
 
-      font-size: 3.2vw;
+      font-size: 2.8vw;
     }
     .frame {
       width: 96vmin;
@@ -114,7 +115,7 @@ export class GameGrid extends LitElement {
       grid-template-rows: repeat(8, 1fr);
     }
     .cell {
-      /* ideally mod 360, but mod not widely supported, and hsl wraps hue */
+      /* hsl wraps hue, no need for mod(). good, cuz it don't work */
       --cell-hue: calc(var(--rot-pal-deg) + var(--pal-offset-deg));
       --color-fg-pri: hsl(calc(1deg * var(--cell-hue)) 100 80);
       display: flex;
