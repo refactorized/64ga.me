@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
 import { produce } from 'immer'
+import { styleMap } from 'lit/directives/style-map.js'
 
 type Answer = {
   correct: boolean
@@ -33,29 +34,42 @@ export class GameGrid extends LitElement {
   private answers: Answer[] = initGrid()
 
   @state()
-  private paletteOffset: number = 0
+  private rotatePaletteDeg: number = 0
+  private interval?: number
 
   buildAnswerHandler(index: number) {
     return () => {
       this.answers = produce(this.answers, (answers) => {
         answers[index].correct = !this.answers[index].correct
-        this.paletteOffset = (this.paletteOffset + 13) % 64
       })
+    }
+  }
+
+  connectedCallback() {
+    super.connectedCallback()
+    this.interval = setInterval(() => {
+      this.rotatePaletteDeg = (this.rotatePaletteDeg + 15) % 360
+    }, 100)
+  }
+
+  disconnectedCallback(): void {
+    if (this.interval) {
+      clearInterval(this.interval)
     }
   }
 
   render() {
     return html`
-      <div class="frame">
+      <div
+        class="frame"
+        style=${styleMap({ '--rot-pal-deg': `${this.rotatePaletteDeg}` })}
+      >
         <div class="grid">
           ${this.answers.map((ans, index) => {
-            const paletteIndex = (index + this.paletteOffset) % 64
             const prompt = html`${ans.a} <span class="times">x</span> ${ans.b}`
             return html` <div
-              style=${`--color-fg-pri: hsl(${
-                (360 / 64) * paletteIndex
-              }deg 100 75);`}
               class="cell"
+              style=${`--pal-offset-deg: ${(index * 360) / 64}`}
               data-correct=${ans.correct}
               @click=${this.buildAnswerHandler(index)}
             >
@@ -100,6 +114,9 @@ export class GameGrid extends LitElement {
       grid-template-rows: repeat(8, 1fr);
     }
     .cell {
+      /* ideally mod 360, but mod not widely supported, and hsl wraps hue */
+      --cell-hue: calc(var(--rot-pal-deg) + var(--pal-offset-deg));
+      --color-fg-pri: hsl(calc(1deg * var(--cell-hue)) 100 80);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -111,12 +128,14 @@ export class GameGrid extends LitElement {
       font-size: 1em;
       text-align: center;
       white-space: nowrap;
-      border: var(--color-fg-pri) 2px solid;
+      border: var(--color-fg-pri) solid 3px;
       color: var(--color-fg-pri);
+
       margin: 5px;
       border-radius: 7px;
 
-      transition: background-color 300ms, color 300ms, border-color 600ms;
+      transition: background-color 300ms linear, color 300ms linear,
+        border-color 300ms linear;
     }
     .times {
       font-size: 0.618em;
