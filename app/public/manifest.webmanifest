@@ -1,0 +1,11 @@
+{
+  "name": "64ga.me",
+  "short_name": "64ga.me",
+  "description": "A multiplication-fact training game.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#222222",
+  "theme_color": "#222222",
+  "icons": []
+}

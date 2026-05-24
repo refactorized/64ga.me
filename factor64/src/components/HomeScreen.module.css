@@ -1,0 +1,76 @@
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: var(--spacing-xl);
+}
+
+.title {
+  font-size: var(--font-size-3xl);
+  margin-bottom: var(--spacing-xl);
+  color: var(--color-primary);
+}
+
+.userList {
+  list-style: none;
+  padding: 0;
+  margin: var(--spacing-lg) 0;
+}
+
+.userItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border);
+  transition: var(--transition);
+}
+
+.userItem:hover {
+  border-color: var(--color-primary);
+}
+
+.userName {
+  font-size: var(--font-size-lg);
+  cursor: pointer;
+  flex-grow: 1;
+  text-align: left;
+}
+
+.userBestTime {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-right: var(--spacing-md);
+}
+
+.removeButton {
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-sm);
+}
+
+.removeButton:hover {
+  color: var(--color-text);
+  border-color: var(--color-primary);
+}
+
+.addUserForm {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.addUserInput {
+  flex-grow: 1;
+}
+
+.emptyState {
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-style: italic;
+  margin: var(--spacing-xl) 0;
+}
