@@ -9,13 +9,13 @@ import {
   submitAnswer,
   finishSession,
 } from '../state/session'
+import { answerLayout, keyboardEnabledFor } from '../state/settings'
 import { goTo } from '../state/screen'
 import { formatMs } from '../lib/format'
 
 // choices[0] = N (top), [1] = E (right), [2] = S (bottom), [3] = W (left)
-const POSITIONS = ['n', 'e', 's', 'w'] as const
-type Position = (typeof POSITIONS)[number]
-
+// In layouts without N/E/S/W positions (square), keyboard input is disabled
+// but the same index → button mapping is used for click handlers.
 const KEY_TO_INDEX: Record<string, number> = {
   ArrowUp: 0,
   w: 0,
@@ -41,6 +41,7 @@ export function GameplayScreen() {
       if (startedAtMs.value) elapsedMs.value = Date.now() - startedAtMs.value
     }, 33)
     const onKey = (e: KeyboardEvent) => {
+      if (!keyboardEnabledFor(answerLayout.value)) return
       const idx = KEY_TO_INDEX[e.key]
       if (idx === undefined) return
       const cur = currentQuestion.value
@@ -55,7 +56,6 @@ export function GameplayScreen() {
     }
   }, [])
 
-  // Watch for completion and advance to finished.
   useEffect(() => {
     if (isDone.value) {
       finishSession()
@@ -66,6 +66,7 @@ export function GameplayScreen() {
   const cur = currentQuestion.value
   const isLocked = correction.value !== null
   const correctIdx = cur ? cur.choices.indexOf(cur.fact.product) : -1
+  const layout = answerLayout.value
 
   return (
     <div class="screen screen--gameplay">
@@ -73,33 +74,35 @@ export function GameplayScreen() {
 
       <div class="play">
         {cur ? (
-          <div class={`diamond ${isLocked ? 'diamond--locked' : ''}`}>
-            <div class="prompt">
-              {isLocked ? (
-                <span>
-                  {cur.fact.a} × {cur.fact.b} = <strong>{cur.fact.product}</strong>
-                </span>
-              ) : (
-                <span>
-                  {cur.fact.a} × {cur.fact.b} = <em>?</em>
-                </span>
-              )}
+          <>
+            <div class="prompt-large">
+              <span>
+                {cur.fact.a} × {cur.fact.b} ={' '}
+                {isLocked ? (
+                  <strong>{cur.fact.product}</strong>
+                ) : (
+                  <em>?</em>
+                )}
+              </span>
             </div>
-            {cur.choices.map((choice, i) => {
-              const pos: Position = POSITIONS[i]
-              const isCorrectFlash = isLocked && i === correctIdx
-              return (
-                <button
-                  key={`${cur.fact.a}-${cur.fact.b}-${i}`}
-                  class={`answer answer--${pos} ${isCorrectFlash ? 'answer--correct-flash' : ''}`}
-                  disabled={isLocked}
-                  onClick={() => submitAnswer(choice)}
-                >
-                  {choice}
-                </button>
-              )
-            })}
-          </div>
+
+            <div class={`answers answers--${layout} ${isLocked ? 'answers--locked' : ''}`}>
+              {cur.choices.map((choice, i) => {
+                const isCorrectFlash = isLocked && i === correctIdx
+                return (
+                  <button
+                    key={`${cur.fact.a}-${cur.fact.b}-${i}`}
+                    data-pos={i}
+                    class={`answer ${isCorrectFlash ? 'answer--correct-flash' : ''}`}
+                    disabled={isLocked}
+                    onClick={() => submitAnswer(choice)}
+                  >
+                    {choice}
+                  </button>
+                )
+              })}
+            </div>
+          </>
         ) : null}
 
         <div class="timer">{formatMs(elapsedMs.value)}</div>

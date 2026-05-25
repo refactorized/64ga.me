@@ -151,12 +151,12 @@ input {
   padding: var(--space-3);
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-4);
   align-items: center;
   width: 100%;
   background: linear-gradient(
     to top,
-    color-mix(in srgb, var(--color-bg-pri) 90%, transparent) 30%,
+    color-mix(in srgb, var(--color-bg-pri) 92%, transparent) 25%,
     transparent
   );
 }
@@ -166,61 +166,121 @@ input {
   opacity: 0.7;
 }
 
-.diamond {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-areas:
-    '.  n  .'
-    'w  p  e'
-    '.  s  .';
-  gap: var(--space-2);
-  width: min(100%, 26rem);
-}
-.prompt {
-  grid-area: p;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.prompt-large {
   font-family: var(--font-display);
-  font-size: clamp(1.25rem, 5vw, 2rem);
+  font-size: clamp(2.5rem, 11vw, 5rem);
   text-align: center;
-  padding: var(--space-2);
+  line-height: 1;
+  letter-spacing: 0.02em;
 }
-.prompt em {
+.prompt-large em {
   font-style: normal;
-  opacity: 0.5;
+  opacity: 0.4;
 }
-.prompt strong {
+.prompt-large strong {
+  font-weight: inherit;
   color: var(--color-fg-pri);
+  /* subtle reveal on lock */
+  animation: prompt-reveal 200ms ease-out;
+}
+@keyframes prompt-reveal {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ---- answers (3 switchable layouts) ---- */
+.answers {
+  position: relative;
+  width: min(100%, 20rem);
+  height: 20rem;
+  flex-shrink: 0; /* absolute children give 0 intrinsic height; lock it */
+  margin: 0 auto;
 }
 .answer {
+  position: absolute;
+  width: 30%;
+  height: 30%;
   font-family: var(--font-display);
   font-size: clamp(1.5rem, 6vw, 2.5rem);
-  padding: var(--space-3);
-  min-height: 3.5rem;
   border: 2px solid var(--color-fg-pri);
   border-radius: var(--radius-2);
   background: color-mix(in srgb, var(--color-bg-pri) 70%, transparent);
-  transition: transform 80ms ease-out, background 200ms;
+  transition: top 350ms cubic-bezier(0.4, 0, 0.2, 1),
+    left 350ms cubic-bezier(0.4, 0, 0.2, 1),
+    width 350ms cubic-bezier(0.4, 0, 0.2, 1),
+    height 350ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 80ms ease-out, background 200ms, opacity 200ms;
 }
 .answer:active {
-  transform: scale(0.95);
-}
-.answer--n {
-  grid-area: n;
-}
-.answer--e {
-  grid-area: e;
-}
-.answer--s {
-  grid-area: s;
-}
-.answer--w {
-  grid-area: w;
+  transform: scale(0.94);
 }
 
-.diamond--locked .answer {
-  opacity: 0.35;
+/* Diamond (default) — N/E/S/W around an empty center */
+.answers--diamond .answer[data-pos='0'] {
+  top: 0;
+  left: 35%;
+}
+.answers--diamond .answer[data-pos='1'] {
+  top: 35%;
+  left: 70%;
+}
+.answers--diamond .answer[data-pos='2'] {
+  top: 70%;
+  left: 35%;
+}
+.answers--diamond .answer[data-pos='3'] {
+  top: 35%;
+  left: 0;
+}
+
+/* Inverted T — N on top, W/S/E on bottom row */
+.answers--inverted-t .answer[data-pos='0'] {
+  top: 0;
+  left: 35%;
+}
+.answers--inverted-t .answer[data-pos='1'] {
+  top: 70%;
+  left: 70%;
+}
+.answers--inverted-t .answer[data-pos='2'] {
+  top: 70%;
+  left: 35%;
+}
+.answers--inverted-t .answer[data-pos='3'] {
+  top: 70%;
+  left: 0;
+}
+
+/* 2x2 square — bigger buttons, no keyboard mapping */
+.answers--square .answer {
+  width: 45%;
+  height: 45%;
+}
+.answers--square .answer[data-pos='0'] {
+  top: 0;
+  left: 0;
+}
+.answers--square .answer[data-pos='1'] {
+  top: 0;
+  left: 55%;
+}
+.answers--square .answer[data-pos='2'] {
+  top: 55%;
+  left: 0;
+}
+.answers--square .answer[data-pos='3'] {
+  top: 55%;
+  left: 55%;
+}
+
+.answers--locked .answer {
+  opacity: 0.3;
   cursor: not-allowed;
 }
 .answer--correct-flash {
@@ -237,6 +297,42 @@ input {
   to {
     transform: scale(1.1);
   }
+}
+
+/* ---- layout picker (ready screen) ---- */
+.layout-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  align-items: center;
+}
+.layout-picker__label {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  opacity: 0.5;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.layout-picker__buttons {
+  display: flex;
+  gap: var(--space-1);
+}
+.layout-pick {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid color-mix(in srgb, var(--color-fg-pri) 30%, transparent);
+  border-radius: var(--radius-1);
+  opacity: 0.6;
+  transition: opacity 150ms, border-color 150ms, background 150ms;
+}
+.layout-pick:hover {
+  opacity: 0.85;
+}
+.layout-pick--active {
+  border-color: var(--color-fg-pri);
+  background: color-mix(in srgb, var(--color-fg-pri) 15%, transparent);
+  opacity: 1;
 }
 
 /* ---- background grid ---- */

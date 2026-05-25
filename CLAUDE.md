@@ -13,7 +13,7 @@ A PWA multiplication-fact game. Players run through the essential 2x2..9x9 multi
 ## App structure (`app/src/`)
 
 - `main.tsx`, `app.tsx`, `index.css` — entry, screen switch, global CSS (single cascade-friendly stylesheet, semantic class names, CSS custom properties for theming).
-- `state/` — signal stores: `screen.ts`, `profiles.ts` (localStorage-backed), `session.ts` (deck, timer, completed set).
+- `state/` — signal stores: `screen.ts`, `profiles.ts` (localStorage-backed), `session.ts` (deck, timer, current question, correction, completed set), `settings.ts` (answer layout, localStorage-backed).
 - `data/` — `facts.ts` (the 64 facts), `distractors.ts` (per-fact hand-curated distractor pools).
 - `lib/` — `shuffle.ts`, `format.ts`.
 - `screens/` — `home`, `ready`, `gameplay` (currently a stub: BG grid + a button that marks a random cell complete), `finished`.

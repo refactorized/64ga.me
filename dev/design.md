@@ -21,7 +21,7 @@ Anyone drilling essential multiplication facts. Realistic primary user: a learne
 
 - **home** — list of local profiles; add/select/remove
 - **ready** — selected profile name + best time + Start
-- **gameplay** — background 8×8 grid (completed cells lit), current prompt, 4 answer buttons in a diamond
+- **gameplay** — background 8×8 grid (completed cells lit), current prompt (large, above), 4 answer buttons in a switchable layout (default diamond)
 - **finished** — total time, new-personal-best celebration when applicable, Play Again / Home
 
 ## Core loop
@@ -40,9 +40,19 @@ Anyone drilling essential multiplication facts. Realistic primary user: a learne
 ## Input
 
 - Touch / click on answer buttons (primary on phone).
-- Arrow keys and WASD map to diamond positions: ↑/W = top, →/D = right, ↓/S = bottom, ←/A = left.
-- Both modalities are always active; no setting or toggle in MVP.
+- Arrow keys and WASD map to diamond/inverted-T positions: ↑/W = top, →/D = right, ↓/S = bottom, ←/A = left.
+- Keyboard input is disabled in 2×2 square layout (no clean directional mapping).
 - During the 3s correction display, all input is locked. (Future: tapping locked buttons triggers screen-shake.)
+
+## Answer layouts (player setting, persisted)
+
+Three layouts selectable on the ready screen, default `diamond`:
+
+- **diamond** — N/E/S/W around an empty center.
+- **inverted-t** — one on top, three across the bottom (W/S/E).
+- **square** — 2×2 grid. Bigger tap targets. No keyboard mapping.
+
+Layout changes animate via CSS transitions on top/left/width/height (350ms ease) — buttons slide into their new positions. Persistence key: `factor64_layout` in localStorage.
 
 ## Distractors
 

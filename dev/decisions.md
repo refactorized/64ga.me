@@ -39,3 +39,15 @@ Adam worked through all open questions inline in `questions.md`. Locked-in choic
 - **L2 Un-completed cell display:** blank outline (no `a × b` text). The grid is a pure progress meter; its visual weight pre-completion is intentional — the game's job is to make clearing it feel painless. Click handling on the original `web/GameGrid` was demo cruft, not behavior to preserve.
 - **S1 Input lockout:** during the 3s correction display, input is locked. Focus and interaction belong wholly to the correction. Future enhancement: tapping locked buttons triggers a screen-shake / wobble so frustration has a humorous outlet — not MVP.
 - **K1 Keyboard mapping:** arrows + WASD mapped to diamond positions (↑/W = top, →/D = right, ↓/S = bottom, ←/A = left). No numeric or vim-style keys for MVP.
+
+---
+
+## 2026-05-24 — Answer layout switcher (amends C10)
+
+Adam wants three answer-button layouts available as a player setting, not just one fixed layout. This amends [C10] from "single layout, dual-input always live."
+
+- **Layouts:** `diamond` (default), `inverted-t`, `square` (2×2).
+- **Selector:** small picker on the ready screen. Persists to localStorage (`factor64_layout`).
+- **Keyboard mapping:** diamond and inverted-T share the N/E/S/W → arrows/WASD mapping. Square disables keyboard input — no clean directional map for a 2×2.
+- **Animation:** CSS transitions on `top`/`left`/`width`/`height` (350ms ease) make buttons slide between positions when the layout changes.
+- The earlier "no in-game settings UI for MVP" stance is softened only for this one toggle, which is small and lives on the pre-game screen (not in-game).
